@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chaos Zero Nightmare 計分器</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #111827;
+      color: #e5e7eb;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    h2 {
+      margin: 16px 0 8px;
+      font-size: 1.2rem;
+    }
+
+    .tier-section {
+      background: #1f2937;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .tier-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      justify-content: space-between;
+    }
+
+    .tier-label {
+      font-weight: 600;
+    }
+
+    #tier {
+      flex: 1 1 240px;
+    }
+
+    .tier-info {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .characters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .character {
+      background: #111827;
+      border-radius: 16px;
+      padding: 12px 12px 16px;
+      border: 1px solid #374151;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    }
+
+    .character h2 {
+      margin-top: 4px;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    .char-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.4fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .char-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .char-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+
+    .control-group {
+      background: #020617;
+      border-radius: 12px;
+      padding: 8px;
+      border: 1px solid #1f2937;
+    }
+
+    .control-group-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      background: #4b5563;
+      color: #f9fafb;
+      transition: transform 0.05s ease, box-shadow 0.05s ease, background 0.1s ease;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      background: #6b7280;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .char-log {
+      background: #020617;
+      border-radius: 12px;
+      padding: 8px;
+      border: 1px solid #1f2937;
+      display: flex;
+      flex-direction: column;
+      min-height: 180px;
+    }
+
+    .char-log h3 {
+      margin: 0 0 6px;
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .char-log h3 span {
+      font-size: 0.8rem;
+      font-weight: normal;
+      opacity: 0.8;
+    }
+
+    .action-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      flex: 1;
+      overflow-y: auto;
+      max-height: 600px;
+      font-size: 0.82rem;
+    }
+
+    .action-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 3px 0;
+      border-bottom: 1px dotted #1f2937;
+    }
+
+    .action-list li:last-child {
+      border-bottom: none;
+    }
+
+    .action-main {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .action-type {
+      font-weight: 500;
+    }
+
+    .action-meta {
+      font-size: 0.75rem;
+      opacity: 0.75;
+    }
+
+    .delete-action {
+      background: transparent;
+      color: #fca5a5;
+      border-radius: 999px;
+      padding: 0 6px;
+      font-size: 0.9rem;
+      border: 1px solid transparent;
+    }
+
+    .delete-action:hover {
+      background: rgba(248, 113, 113, 0.1);
+      border-color: rgba(248, 113, 113, 0.4);
+    }
+
+    .char-total {
+      margin-top: 6px;
+      font-size: 0.9rem;
+      text-align: right;
+      border-top: 1px solid #1f2937;
+      padding-top: 4px;
+    }
+
+    .summary {
+      background: #111827;
+      border-radius: 16px;
+      padding: 12px 14px;
+      border: 1px solid #4b5563;
+    }
+
+    .summary h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px;
+      font-size: 0.88rem;
+    }
+
+    .summary-card {
+      background: #020617;
+      border-radius: 12px;
+      padding: 8px;
+      border: 1px solid #1f2937;
+    }
+
+    .highlight {
+      font-weight: 600;
+    }
+
+    .status-ok {
+      color: #bbf7d0;
+    }
+
+    .status-warn {
+      color: #facc15;
+    }
+
+    .status-bad {
+      color: #fecaca;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>靠死奶頭沒阿 存檔計分器</h1>
+
+    <!-- Tier 選擇 -->
+    <section class="tier-section">
+      <div class="tier-row">
+        <div class="tier-label">
+          Tier：
+          <span id="tierValue">1</span>
+        </div>
+        <input type="range" id="tier" min="1" max="15" value="1" />
+        <div class="tier-info">
+          上限：<span id="tierLimit">30</span> pt
+        </div>
+      </div>
+      <div class="tier-info" style="margin-top:6px;">
+      </div>
+    </section>
+
+    <!-- 三個角色區塊 -->
+    <section class="characters" id="characters">
+      <!-- Character 1 -->
+      <div class="character" data-char="0">
+        <h2>角色 1</h2>
+        <div class="char-layout">
+          <!-- 控制按鈕（右側） -->
+          <div class="char-controls">
+            <div class="control-group">
+              <div class="control-group-title">新增</div>
+              <div class="button-row">
+                <button data-action="add_neutral">中立牌</button>
+                <button data-action="add_monster">怪物牌</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-group-title">靈光一閃</div>
+              <div class="button-row">
+                <button data-action="insp_normal">靈光一閃</button>
+                <button data-action="insp_divine">神閃</button>
+                <button data-action="insp_monster">怪物牌靈光一閃</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-group-title">移除</div>
+              <div class="button-row">
+                <button data-action="remove_normal">一般＆中立移除</button>
+                <button data-action="remove_divine">起始＆神閃移除</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-group-title">複製</div>
+              <div class="button-row">
+                <button data-action="copy_normal">一般</button>
+                <button data-action="copy_insp">靈光一閃</button>
+                <button data-action="copy_divine">神閃</button>
+                <button data-action="copy_monster_insp">怪物牌靈光一閃</button>
+                <button data-action="copy_monster_divine">怪物牌神閃</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-group-title">轉換</div>
+              <div class="button-row">
+                <button data-action="convert_normal">一般</button>
+                <button data-action="convert_neutral">中立</button>
+                <button data-action="convert_monster">怪物</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-group-title">賽季</div>
+              <div class="button-row">
+                <button data-action="forbidden">禁忌卡牌</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 紀錄＆小計（左側） -->
+          <div class="char-log">
+            <h3>
+              紀錄
+              <span>點「✕」可刪除該步驟</span>
+            </h3>
+            <ul class="action-list"></ul>
+            <div class="char-total">
+              小計：<span class="char-total-value">0</span> pt
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Character 2 -->
+      <div class="character" data-char="1">
+        <h2>角色 2</h2>
+        <div class="char-layout">
+          <div class="char-controls">
+            <div class="control-group">
+              <div class="control-group-title">新增</div>
+              <div class="button-row">
+                <button data-action="add_neutral">中立牌</button>
+                <button data-action="add_monster">怪物牌</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-group-title">靈光一閃</div>
+              <div class="button-row">
+                <button data-action="insp_normal">靈光一閃</button>
+                <button data-action="insp_divine">神閃</button>
+                <button data-action="insp_monster">怪物牌靈光一閃</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-group-title">移除</div>
+              <div class="button-row">
+                <button data-action="remove_normal">一般＆中立移除</button>
+                <button data-action="remove_divine">起始＆神閃移除</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-group-title">複製</div>
+              <div class="button-row">
+                <button data-action="copy_normal">一般</button>
+                <button data-action="copy_insp">靈光一閃</button>
+                <button data-action="copy_divine">神閃</button>
+                <button data-action="copy_monster_insp">怪物牌靈光一閃</button>
+                <button data-action="copy_monster_divine">怪物牌神閃</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-group-title">轉換</div>
+              <div class="button-row">
+                <button data-action="convert_normal">一般</button>
+                <button data-action="convert_neutral">中立</button>
+                <button data-action="convert_monster">怪物</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-group-title">賽季</div>
+              <div class="button-row">
+                <button data-action="forbidden">禁忌卡牌</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="char-log">
+            <h3>
+              紀錄
+              <span>點「✕」可刪除該步驟</span>
+            </h3>
+            <ul class="action-list"></ul>
+            <div class="char-total">
+              小計：<span class="char-total-value">0</span> pt
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Character 3 -->
+      <div class="character" data-char="2">
+        <h2>角色 3</h2>
+        <div class="char-layout">
+          <div class="char-controls">
+            <div class="control-group">
+              <div class="control-group-title">新增</div>
+              <div class="button-row">
+                <button data-action="add_neutral">中立牌</button>
+                <button data-action="add_monster">怪物牌</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-group-title">靈光一閃</div>
+              <div class="button-row">
+                <button data-action="insp_normal">靈光一閃</button>
+                <button data-action="insp_divine">神閃</button>
+                <button data-action="insp_monster">怪物牌靈光一閃</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-group-title">移除</div>
+              <div class="button-row">
+                <button data-action="remove_normal">一般＆中立移除</button>
+                <button data-action="remove_divine">起始＆神閃移除</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-group-title">複製</div>
+              <div class="button-row">
+                <button data-action="copy_normal">一般</button>
+                <button data-action="copy_insp">靈光一閃</button>
+                <button data-action="copy_divine">神閃</button>
+                <button data-action="copy_monster_insp">怪物牌靈光一閃</button>
+                <button data-action="copy_monster_divine">怪物牌神閃</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-group-title">轉換</div>
+              <div class="button-row">
+                <button data-action="convert_normal">一般</button>
+                <button data-action="convert_neutral">中立</button>
+                <button data-action="convert_monster">怪物</button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-group-title">賽季</div>
+              <div class="button-row">
+                <button data-action="forbidden">禁忌卡牌</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="char-log">
+            <h3>
+              紀錄
+              <span>點「✕」可刪除該步驟</span>
+            </h3>
+            <ul class="action-list"></ul>
+            <div class="char-total">
+              小計：<span class="char-total-value">0</span> pt
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+  <script>
+    // ========= 可調整的計分常數 =========
+    const TIER_BASE = 20;       // 公式: base + 10 * tier
+    const TIER_STEP = 10;
+
+    // 靈光一閃／神閃／怪物牌
+    const POINTS_INSP_NORMAL = 20;   // 共用中立卡靈光一閃
+    const POINTS_INSP_DIVINE = 20;   // 神之靈光一閃
+    const POINTS_INSP_MONSTER = 80;  // 共用怪物卡靈光一閃
+
+    const POINTS_FORBIDDEN = 20;     // 禁忌卡牌
+
+    const POINTS_CONVERT = 10;       // 每次轉換基本 10pt
+
+    // 移除 / 複製：第1次 0, 第2次 10, 第3次 30, 第4次 50, 第5次起每次 70
+    function stepCost(count) {
+      if (count <= 0) return 0;
+      if (count === 1) return 0;
+      if (count === 2) return 10;
+      if (count === 3) return 30;
+      if (count === 4) return 50;
+      return 70;
+    }
+
+    // ========= 內部資料結構 =========
+    const ACTION_LABELS = {
+      add_neutral: "新增 - 中立牌",
+      add_monster: "新增 - 怪物牌",
+
+      insp_normal: "靈光一閃 - 一般",
+      insp_divine: "靈光一閃 - 神之靈光一閃",
+      insp_monster: "靈光一閃 - 怪物牌靈光",
+
+      remove_normal: "移除 - 一般＆中立",
+      remove_divine: "移除 - 起始＆神閃",
+
+      copy_normal: "複製 - 一般",
+      copy_insp: "複製 - 靈光一閃",
+      copy_divine: "複製 - 神閃",
+      copy_monster_insp: "複製 - 怪物牌靈光",
+      copy_monster_divine: "複製 - 怪物牌神閃",
+
+      convert_normal: "轉換 - 一般",
+      convert_neutral: "轉換 - 中立",
+      convert_monster: "轉換 - 怪物",
+
+      forbidden: "賽季 - 禁忌卡牌"
+    };
+
+    // 每個角色的操作紀錄陣列
+    const histories = [[], [], []]; // 每個元素: { type, points }
+
+    // ========= Tier & 上限處理 =========
+    const tierInput = document.getElementById("tier");
+    const tierValue = document.getElementById("tierValue");
+    const tierLimitLabel = document.getElementById("tierLimit");
+    const overallTotalLabel = document.getElementById("overallTotal");
+    const remainingPointsLabel = document.getElementById("remainingPoints");
+    const limitStatus = document.getElementById("limitStatus");
+
+    const sumChar0 = document.getElementById("sumChar0");
+    const sumChar1 = document.getElementById("sumChar1");
+    const sumChar2 = document.getElementById("sumChar2");
+    const sumAll = document.getElementById("sumAll");
+    const sumLimit = document.getElementById("sumLimit");
+    const sumRemain = document.getElementById("sumRemain");
+
+    function tierLimit(tier) {
+      return TIER_BASE + TIER_STEP * tier; // 符合你提供的 Tier1=30, Tier2=40...
+    }
+
+    function updateTierDisplay() {
+      const tier = parseInt(tierInput.value, 10);
+      const limit = tierLimit(tier);
+
+      tierValue.textContent = tier;
+      tierLimitLabel.textContent = limit;
+      sumLimit.textContent = limit;
+
+      // 重新用目前總分更新剩餘空間
+      const total = calculateAllTotals().grandTotal;
+      const remain = limit - total;
+      remainingPointsLabel.textContent = remain;
+      sumRemain.textContent = remain;
+      overallTotalLabel.textContent = total;
+      sumAll.textContent = total;
+
+      updateLimitStatus(remain);
+    }
+
+    function updateLimitStatus(remain) {
+      limitStatus.classList.remove("status-ok", "status-warn", "status-bad");
+      if (remain > 10) {
+        limitStatus.textContent = "（未超過上限）";
+        limitStatus.classList.add("status-ok");
+      } else if (remain >= 0) {
+        limitStatus.textContent = "（接近上限）";
+        limitStatus.classList.add("status-warn");
+      } else {
+        limitStatus.textContent = `（已超過上限 ${Math.abs(remain)} pt）`;
+        limitStatus.classList.add("status-bad");
+      }
+    }
+
+    tierInput.addEventListener("input", updateTierDisplay);
+
+    // ========= 計分邏輯 =========
+    function recalcCharacter(charIndex) {
+      const history = histories[charIndex];
+      let removeCount = 0;
+      let copyCount = 0;
+      let total = 0;
+
+      for (let i = 0; i < history.length; i++) {
+        const entry = history[i];
+        const type = entry.type;
+        let pts = 0;
+        let detail = "";
+
+        switch (type) {
+          // 新增本身不計分（可以視覺用途／紀錄 deck 變化）
+          case "add_neutral":
+            pts = 10;
+            detail = "新增中立牌（10分）";
+            break;
+          case "add_monster":
+            pts = 80;
+            detail = "新增怪物牌（80分）";
+            break;
+
+          // 靈光一閃
+          case "insp_normal":
+            pts = POINTS_INSP_NORMAL;
+            detail = `靈光一閃 +${POINTS_INSP_NORMAL}`;
+            break;
+          case "insp_divine":
+            pts = POINTS_INSP_DIVINE;
+            detail = `神閃 +${POINTS_INSP_DIVINE}`;
+            break;
+          case "insp_monster":
+            pts = POINTS_INSP_MONSTER;
+            detail = `怪物牌靈光一閃 +${POINTS_INSP_MONSTER}`;
+            break;
+
+          // 移除：遞增計分 + 神閃／起始額外 +20
+          case "remove_normal":
+            removeCount++;
+            pts = stepCost(removeCount);
+            detail = `第 ${removeCount} 次移除（一般/中立），+${pts}`;
+            break;
+          case "remove_divine":
+            removeCount++;
+            pts = stepCost(removeCount) + 20; // +20 for 起始/神閃
+            detail = `第 ${removeCount} 次移除（起始/神閃），基本+${stepCost(removeCount)} + 起始/神閃 +20`;
+            break;
+
+          // 複製：遞增計分 + 被複製卡本身的點數
+          case "copy_normal":
+            copyCount++;
+            pts = stepCost(copyCount);
+            detail = `第 ${copyCount} 次複製（一般），+${pts}`;
+            break;
+          case "copy_insp":
+            copyCount++;
+            pts = stepCost(copyCount) + POINTS_INSP_NORMAL;
+            detail = `第 ${copyCount} 次複製（靈光），基本+${stepCost(copyCount)} + 靈光 ${POINTS_INSP_NORMAL}`;
+            break;
+          case "copy_divine":
+            copyCount++;
+            pts = stepCost(copyCount) + POINTS_INSP_DIVINE;
+            detail = `第 ${copyCount} 次複製（神閃），基本+${stepCost(copyCount)} + 神閃 ${POINTS_INSP_DIVINE}`;
+            break;
+          case "copy_monster_insp":
+            copyCount++;
+            pts = stepCost(copyCount) + POINTS_INSP_MONSTER;
+            detail = `第 ${copyCount} 次複製（怪物牌靈光），基本+${stepCost(copyCount)} + ${POINTS_INSP_MONSTER}`;
+            break;
+          case "copy_monster_divine":
+            copyCount++;
+            // 這裡假設：怪物牌 + 靈光 + 神閃 = 80 + 20
+            pts = stepCost(copyCount) + POINTS_INSP_MONSTER + POINTS_INSP_DIVINE;
+            detail = `第 ${copyCount} 次複製（怪物牌神閃），基本+${stepCost(copyCount)} + 怪物靈光 ${POINTS_INSP_MONSTER} + 神閃 ${POINTS_INSP_DIVINE}`;
+            break;
+
+          // 轉換：每次 10pt，若轉成有記點要素可以再加（這裡示範加上）
+          case "convert_normal":
+            pts = POINTS_CONVERT;
+            detail = `轉換（一般）+${POINTS_CONVERT}`;
+            break;
+          case "convert_neutral":
+            // 轉換 + 變成中立靈光可記點（示範：10 + 20）
+            pts = POINTS_CONVERT + POINTS_INSP_NORMAL;
+            detail = `轉換成中立卡 + 靈光 +${POINTS_CONVERT}+${POINTS_INSP_NORMAL}`;
+            break;
+          case "convert_monster":
+            // 轉換 + 變成怪物靈光可記點（示範：10 + 80）
+            pts = POINTS_CONVERT + POINTS_INSP_MONSTER;
+            detail = `轉換成怪物卡 + 靈光 +${POINTS_CONVERT}+${POINTS_INSP_MONSTER}`;
+            break;
+
+          // 禁忌卡牌
+          case "forbidden":
+            pts = POINTS_FORBIDDEN;
+            detail = `禁忌卡牌 +${POINTS_FORBIDDEN}`;
+            break;
+
+          default:
+            pts = 0;
+            detail = "";
+        }
+
+        entry.points = pts;
+        entry.detail = detail;
+        total += pts;
+      }
+
+      return { total };
+    }
+
+    function calculateAllTotals() {
+      const perChar = histories.map((_, idx) => recalcCharacter(idx).total);
+      const grandTotal = perChar.reduce((a, b) => a + b, 0);
+      return { perChar, grandTotal };
+    }
+
+    // ========= Render =========
+    function render() {
+      const { perChar, grandTotal } = calculateAllTotals();
+
+      const chars = document.querySelectorAll(".character");
+      chars.forEach((charEl) => {
+        const charIndex = parseInt(charEl.dataset.char, 10);
+        const listEl = charEl.querySelector(".action-list");
+        const totalEl = charEl.querySelector(".char-total-value");
+
+        listEl.innerHTML = "";
+        const history = histories[charIndex];
+
+        history.forEach((entry, idx) => {
+          const li = document.createElement("li");
+
+          const main = document.createElement("div");
+          main.className = "action-main";
+
+          const title = document.createElement("div");
+          title.className = "action-type";
+          title.textContent = `${idx + 1}. ${ACTION_LABELS[entry.type] || entry.type}`;
+
+          const meta = document.createElement("div");
+          meta.className = "action-meta";
+          meta.textContent = `${entry.detail || ""}（+${entry.points} pt）`;
+
+          main.appendChild(title);
+          main.appendChild(meta);
+
+          const delBtn = document.createElement("button");
+          delBtn.className = "delete-action";
+          delBtn.textContent = "✕";
+          delBtn.dataset.char = String(charIndex);
+          delBtn.dataset.idx = String(idx);
+
+          li.appendChild(main);
+          li.appendChild(delBtn);
+
+          listEl.appendChild(li);
+        });
+
+        totalEl.textContent = perChar[charIndex];
+      });
+
+      // 更新頂部 / 總結的總分 & 上限狀態
+      const tier = parseInt(tierInput.value, 10);
+      const limit = tierLimit(tier);
+      const remain = limit - grandTotal;
+
+      overallTotalLabel.textContent = grandTotal;
+      remainingPointsLabel.textContent = remain;
+      sumChar0.textContent = perChar[0];
+      sumChar1.textContent = perChar[1];
+      sumChar2.textContent = perChar[2];
+      sumAll.textContent = grandTotal;
+      sumLimit.textContent = limit;
+      sumRemain.textContent = remain;
+
+      updateLimitStatus(remain);
+    }
+
+    // ========= 事件綁定 =========
+    // 按鈕：新增一個操作
+    document.getElementById("characters").addEventListener("click", (e) => {
+      const target = e.target;
+      if (!(target instanceof HTMLElement)) return;
+
+      // 操作按鈕
+      if (target.dataset.action) {
+        const charEl = target.closest(".character");
+        if (!charEl) return;
+        const charIndex = parseInt(charEl.dataset.char, 10);
+        const actionType = target.dataset.action;
+
+        histories[charIndex].push({ type: actionType, points: 0, detail: "" });
+        render();
+      }
+
+      // 刪除某一步
+      if (target.classList.contains("delete-action")) {
+        const charIndex = parseInt(target.dataset.char, 10);
+        const idx = parseInt(target.dataset.idx, 10);
+        histories[charIndex].splice(idx, 1);
+        render();
+      }
+    });
+
+    // 初始化
+    updateTierDisplay();
+    render();
+  </script>
+</body>
+</html>
