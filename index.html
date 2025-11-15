@@ -2,14 +2,13 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>Chaos Zero Nightmare 計分器</title>
+  <title>Chaos Zero Nightmare Save Data Calculater</title>
   <link rel="stylesheet" href="./css/savedata.css">
 </head>
 <body>
   <div class="container">
-    <h1>靠死奶頭沒阿 存檔計分器</h1>
+    <h1>Chaos Zero Nightmare 存檔計分器 V1.0.0</h1>
 
-    <!-- Tier 選擇 -->
     <section class="tier-section">
       <div class="tier-row">
         <div class="tier-label">
@@ -25,225 +24,89 @@
       </div>
     </section>
 
-    <!-- 三個角色區塊 -->
     <section class="characters" id="characters">
-      <!-- Character 1 -->
-      <div class="character" data-char="0">
-        <h2>角色 1</h2>
-        <div class="char-layout">
-          <!-- 控制按鈕（右側） -->
-          <div class="char-controls">
-            <div class="control-group">
-              <div class="control-group-title">新增</div>
-              <div class="button-row">
-                <button data-action="add_neutral">中立牌</button>
-                <button data-action="add_monster">怪物牌</button>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control-group-title">靈光一閃</div>
-              <div class="button-row">
-                <button data-action="insp_normal">靈光一閃</button>
-                <button data-action="insp_divine">神閃</button>
-                <button data-action="insp_monster">怪物牌靈光一閃</button>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control-group-title">移除</div>
-              <div class="button-row">
-                <button data-action="remove_normal">一般＆中立移除</button>
-                <button data-action="remove_divine">起始＆神閃移除</button>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control-group-title">複製</div>
-              <div class="button-row">
-                <button data-action="copy_normal">一般</button>
-                <button data-action="copy_insp">靈光一閃</button>
-                <button data-action="copy_divine">神閃</button>
-                <button data-action="copy_monster_insp">怪物牌靈光一閃</button>
-                <button data-action="copy_monster_divine">怪物牌神閃</button>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control-group-title">轉換</div>
-              <div class="button-row">
-                <button data-action="convert_normal">一般</button>
-                <button data-action="convert_neutral">中立</button>
-                <button data-action="convert_monster">怪物</button>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control-group-title">賽季</div>
-              <div class="button-row">
-                <button data-action="forbidden">禁忌卡牌</button>
-              </div>
-            </div>
+      <div class="character">
+        <h2>角色 1
+          <div class="char-pt">
+            <span class="char-pt-value">0</span> pt
           </div>
+        </h2>
+        <div class="char-layout">
+          <div class="char-cards">
+            <!-- <div class="card">
+              <div class="card-title">基礎</div>
+              <div class="card-pt"><span>pt:</span><span>0</span></div>
+              <div class="card-control">
+                <button>轉換</button>
+                <button>移除</button>
+                <button>複製</button>
+              </div>
+            </div> -->
 
-          <!-- 紀錄＆小計（左側） -->
-          <div class="char-log">
-            <h3>
-              紀錄
-              <span>點「✕」可刪除該步驟</span>
-            </h3>
-            <ul class="action-list"></ul>
-            <div class="char-total">
-              小計：<span class="char-total-value">0</span> pt
+            <div class="new-card">
+              <div class="card-title">+</div>
+              <div class="card-control">
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Character 2 -->
-      <div class="character" data-char="1">
-        <h2>角色 2</h2>
-        <div class="char-layout">
-          <div class="char-controls">
-            <div class="control-group">
-              <div class="control-group-title">新增</div>
-              <div class="button-row">
-                <button data-action="add_neutral">中立牌</button>
-                <button data-action="add_monster">怪物牌</button>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control-group-title">靈光一閃</div>
-              <div class="button-row">
-                <button data-action="insp_normal">靈光一閃</button>
-                <button data-action="insp_divine">神閃</button>
-                <button data-action="insp_monster">怪物牌靈光一閃</button>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control-group-title">移除</div>
-              <div class="button-row">
-                <button data-action="remove_normal">一般＆中立移除</button>
-                <button data-action="remove_divine">起始＆神閃移除</button>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control-group-title">複製</div>
-              <div class="button-row">
-                <button data-action="copy_normal">一般</button>
-                <button data-action="copy_insp">靈光一閃</button>
-                <button data-action="copy_divine">神閃</button>
-                <button data-action="copy_monster_insp">怪物牌靈光一閃</button>
-                <button data-action="copy_monster_divine">怪物牌神閃</button>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control-group-title">轉換</div>
-              <div class="button-row">
-                <button data-action="convert_normal">一般</button>
-                <button data-action="convert_neutral">中立</button>
-                <button data-action="convert_monster">怪物</button>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control-group-title">賽季</div>
-              <div class="button-row">
-                <button data-action="forbidden">禁忌卡牌</button>
-              </div>
-            </div>
+      <div class="character">
+        <h2>角色 2
+          <div class="char-pt">
+            <span class="char-pt-value">0</span> pt
           </div>
+        </h2>
+        <div class="char-layout">
+          <div class="char-cards">
+            <!-- <div class="card">
+              <div class="card-title">基礎</div>
+              <div class="card-pt"><span>pt:</span><span>0</span></div>
+              <div class="card-control">
+                <button>轉換</button>
+                <button>移除</button>
+                <button>複製</button>
+              </div>
+            </div> -->
 
-          <div class="char-log">
-            <h3>
-              紀錄
-              <span>點「✕」可刪除該步驟</span>
-            </h3>
-            <ul class="action-list"></ul>
-            <div class="char-total">
-              小計：<span class="char-total-value">0</span> pt
+            <div class="new-card">
+              <div class="card-title">+</div>
+              <div class="card-control">
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Character 3 -->
-      <div class="character" data-char="2">
-        <h2>角色 3</h2>
-        <div class="char-layout">
-          <div class="char-controls">
-            <div class="control-group">
-              <div class="control-group-title">新增</div>
-              <div class="button-row">
-                <button data-action="add_neutral">中立牌</button>
-                <button data-action="add_monster">怪物牌</button>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control-group-title">靈光一閃</div>
-              <div class="button-row">
-                <button data-action="insp_normal">靈光一閃</button>
-                <button data-action="insp_divine">神閃</button>
-                <button data-action="insp_monster">怪物牌靈光一閃</button>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control-group-title">移除</div>
-              <div class="button-row">
-                <button data-action="remove_normal">一般＆中立移除</button>
-                <button data-action="remove_divine">起始＆神閃移除</button>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control-group-title">複製</div>
-              <div class="button-row">
-                <button data-action="copy_normal">一般</button>
-                <button data-action="copy_insp">靈光一閃</button>
-                <button data-action="copy_divine">神閃</button>
-                <button data-action="copy_monster_insp">怪物牌靈光一閃</button>
-                <button data-action="copy_monster_divine">怪物牌神閃</button>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control-group-title">轉換</div>
-              <div class="button-row">
-                <button data-action="convert_normal">一般</button>
-                <button data-action="convert_neutral">中立</button>
-                <button data-action="convert_monster">怪物</button>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control-group-title">賽季</div>
-              <div class="button-row">
-                <button data-action="forbidden">禁忌卡牌</button>
-              </div>
-            </div>
+      <div class="character">
+        <h2>角色 3
+          <div class="char-pt">
+            <span class="char-pt-value">0</span> pt
           </div>
+        </h2>
+        <div class="char-layout">
+          <div class="char-cards">
+            <!-- <div class="card">
+              <div class="card-title">基礎</div>
+              <div class="card-pt"><span>pt:</span><span>0</span></div>
+              <div class="card-control">
+                <button>轉換</button>
+                <button>移除</button>
+                <button>複製</button>
+              </div>
+            </div> -->
 
-          <div class="char-log">
-            <h3>
-              紀錄
-              <span>點「✕」可刪除該步驟</span>
-            </h3>
-            <ul class="action-list"></ul>
-            <div class="char-total">
-              小計：<span class="char-total-value">0</span> pt
+            <div class="new-card">
+              <div class="card-title">+</div>
+              <div class="card-control">
+              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
-
-
+  </div>
   <script src="./js/savedata.js"></script>
 </body>
 </html>
