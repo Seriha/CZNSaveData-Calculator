@@ -120,11 +120,6 @@ h2 {
     align-items: center;
     color: var(--font-color);
 }
-/* .new-card:hover {
-    background: #6b7280;
-    color: #020617;
-    transform: translateY(-1px);
-} */
 
 .new-card .card-title {
     margin-bottom: 20px;
@@ -136,10 +131,6 @@ h2 {
 .new-card {
     background: #0e1223;
 }
-
-/* .new-card:active .card-title {
-    transform: translateY(3px);
-} */
 
 .card-pt {
     position: absolute;
