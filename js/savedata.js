@@ -57,6 +57,7 @@ function calculatePoint(cardEl) {
             overallPoint += 10;
 
         ptValueEl.textContent = overallPoint;
+        updateTotalPoint(charEl);
         return;
     }
 
