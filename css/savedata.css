@@ -1,0 +1,259 @@
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #111827;
+    color: #e5e7eb;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+}
+
+h1 {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+h2 {
+    margin: 16px 0 8px;
+    font-size: 1.2rem;
+}
+
+.tier-section {
+    background: #1f2937;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.tier-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    justify-content: space-between;
+}
+
+.tier-label {
+    font-weight: 600;
+}
+
+#tier {
+    flex: 1 1 240px;
+}
+
+.tier-info {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.characters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.character {
+    background: #111827;
+    border-radius: 16px;
+    padding: 12px 12px 16px;
+    border: 1px solid #374151;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+.character h2 {
+    margin-top: 4px;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.char-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.4fr);
+    gap: 12px;
+}
+
+@media (max-width: 768px) {
+    .char-layout {
+	grid-template-columns: 1fr;
+    }
+}
+
+.char-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.85rem;
+}
+
+.control-group {
+    background: #020617;
+    border-radius: 12px;
+    padding: 8px;
+    border: 1px solid #1f2937;
+}
+
+.control-group-title {
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+}
+
+.button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+button {
+    border: none;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    background: #4b5563;
+    color: #f9fafb;
+    transition: transform 0.05s ease, box-shadow 0.05s ease, background 0.1s ease;
+    white-space: nowrap;
+}
+
+button:hover {
+    background: #6b7280;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.char-log {
+    background: #020617;
+    border-radius: 12px;
+    padding: 8px;
+    border: 1px solid #1f2937;
+    display: flex;
+    flex-direction: column;
+    min-height: 180px;
+}
+
+.char-log h3 {
+    margin: 0 0 6px;
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.char-log h3 span {
+    font-size: 0.8rem;
+    font-weight: normal;
+    opacity: 0.8;
+}
+
+.action-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+    overflow-y: auto;
+    max-height: 600px;
+    font-size: 0.82rem;
+}
+
+.action-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 0;
+    border-bottom: 1px dotted #1f2937;
+}
+
+.action-list li:last-child {
+    border-bottom: none;
+}
+
+.action-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.action-type {
+    font-weight: 500;
+}
+
+.action-meta {
+    font-size: 0.75rem;
+    opacity: 0.75;
+}
+
+.delete-action {
+    background: transparent;
+    color: #fca5a5;
+    border-radius: 999px;
+    padding: 0 6px;
+    font-size: 0.9rem;
+    border: 1px solid transparent;
+}
+
+.delete-action:hover {
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.4);
+}
+
+.char-total {
+    margin-top: 6px;
+    font-size: 0.9rem;
+    text-align: right;
+    border-top: 1px solid #1f2937;
+    padding-top: 4px;
+}
+
+.summary {
+    background: #111827;
+    border-radius: 16px;
+    padding: 12px 14px;
+    border: 1px solid #4b5563;
+}
+
+.summary h2 {
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 8px;
+    font-size: 0.88rem;
+}
+
+.summary-card {
+    background: #020617;
+    border-radius: 12px;
+    padding: 8px;
+    border: 1px solid #1f2937;
+}
+
+.highlight {
+    font-weight: 600;
+}
+
+.status-ok {
+    color: #bbf7d0;
+}
+
+.status-warn {
+    color: #facc15;
+}
+
+.status-bad {
+    color: #fecaca;
+}
