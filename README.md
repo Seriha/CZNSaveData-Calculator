@@ -6,7 +6,10 @@ This is test project
 
 ## TODO
 
-- 禁忌卡牌計算
+- 一閃/神閃 提示
+- 返回上一步
+- 暫存 Tier 設定
+- 選擇角色名稱
 
 ## License
 

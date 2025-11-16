@@ -30,8 +30,9 @@ function calculatePoint(cardEl) {
     const cardInfo = getCardInf(cardEl);
     const charEl = cardEl.closest(".character");
     const charIndex = [...charsEl.children].indexOf(charEl);
-    const ptValueEl = cardEl.matches(".card") ? cardEl.querySelector(".card-pt").lastElementChild : null;
     let overallPoint = 0;
+
+    const details = [];
 
     const copyIndex = charCopyCards[charIndex].indexOf(cardEl) + 1;
     if (copyIndex > 0) {
@@ -43,6 +44,8 @@ function calculatePoint(cardEl) {
             overallPoint += 30;
         else if (copyIndex == 2)
             overallPoint += 10;
+
+        details.push(`${actions["copy"]}(${copyIndex})`);
     }
 
     const removeIndex = charRemoveCards[charIndex].indexOf(cardEl) + 1;
@@ -56,38 +59,74 @@ function calculatePoint(cardEl) {
         else if (removeIndex == 2)
             overallPoint += 10;
 
-        ptValueEl.textContent = overallPoint;
-        updateTotalPoint(charEl);
-        return;
+        details.push(`${actions["remove"]}(${removeIndex})`);
     }
+    else {
+        if (cardInfo.source == "convert")
+            overallPoint += 10;
 
-    if (cardInfo.source == "convert")
-        overallPoint += 10;
-
-    switch (cardInfo.type) {
-        case "standard":
-        case "unique":
-            if (cardInfo.insp == "divine")
+        switch (cardInfo.type) {
+            case "standard":
+            case "unique":
+                if (cardInfo.insp == "divine") {
+                    overallPoint += 20;
+                    details.push(actions["divine"]);
+                }
+                break;
+            case "neutral":
                 overallPoint += 20;
-            break;
-        case "neutral":
-            overallPoint += 20;
-            if (cardInfo.insp == "insp")
-                overallPoint += 10;
-            else if (cardInfo.insp == "divine")
-                overallPoint += 30;
-            break;
-        case "monster":
-            overallPoint += 80;
-            if (cardInfo.insp == "insp")
-                overallPoint += 10;
-            else if (cardInfo.insp == "divine")
-                overallPoint += 30;
-            break;
+                details.push(cardTypes["neutral"]);
+                if (cardInfo.insp == "insp") {
+                    overallPoint += 10;
+                    details.push(actions["insp"]);
+                }
+                else if (cardInfo.insp == "divine") {
+                    overallPoint += 30;
+                    details.push(actions["divine"]);
+                }
+                break;
+            case "monster":
+                overallPoint += 80;
+                details.push(cardTypes["monster"]);
+                if (cardInfo.insp == "insp") {
+                    overallPoint += 10;
+                    details.push(actions["insp"]);
+                }
+                else if (cardInfo.insp == "divine") {
+                    overallPoint += 30;
+                    details.push(actions["divine"]);
+                }
+                break;
+            case "taboo":
+                overallPoint += 20;
+                details.push(cardTypes["taboo"]);
+                break;
+        }
     }
-
+    
+    const ptValueEl = cardEl.matches(".card") ? cardEl.querySelector(".card-pt").lastElementChild : null;
     ptValueEl.textContent = overallPoint;
+
     updateTotalPoint(charEl);
+
+    const cardIndex = [...cardEl.parentElement.children].indexOf(cardEl);
+    const ptDetailsEl = [...charEl.querySelector(".char-pt-details").children][cardIndex];
+    const ptDetailList = [...ptDetailsEl.childNodes];
+    ptDetailList.shift();
+
+    ptDetailList.forEach(child => ptDetailsEl.removeChild(child));
+
+    details.forEach(detail => {
+        const detailEl = document.createElement("span");
+        detailEl.textContent = detail;
+
+        ptDetailsEl.appendChild(detailEl);
+    });    
+
+    const ptEl = document.createElement("span");
+    ptEl.textContent = `${overallPoint}pt`;
+
+    ptDetailsEl.appendChild(ptEl);
 }
 
 function updateTotalPoint(charEl) {
@@ -115,6 +154,7 @@ const actions = {
     unique: "獨特",
     neutral: "中立",
     monster: "怪物",
+    taboo: "禁忌",
     remove: "移除",
     copy: "複製",
     insp: "一閃",
@@ -127,14 +167,14 @@ const cardTypes = {
     standard: "基礎",
     unique: "獨特",
     neutral: "中立",
-    monster: "怪物"
+    monster: "怪物",
+    taboo: "禁忌"
 };
 
 function addControl(cardEl, action) {
     const controlEl = cardEl.querySelector(".card-control");
     const buttonEl = document.createElement("button");
 
-    //buttonEl.className = "control-button";
     buttonEl.dataset.action = action;
     buttonEl.textContent = actions[action];
 
@@ -168,6 +208,9 @@ function addCard(charEl, cardType) {
 
     const ptValueEl = document.createElement("span");
 
+    const moTrigger = document.createElement("div");
+    moTrigger.className = "card-mobile-trigger";
+
     const controlEl = document.createElement("div");
     controlEl.className = "card-control";
 
@@ -175,14 +218,17 @@ function addCard(charEl, cardType) {
     ptEl.appendChild(ptValueEl);
     cardEl.appendChild(titleEl);
     cardEl.appendChild(ptEl);
+    cardEl.appendChild(moTrigger);
     cardEl.appendChild(controlEl);
 
     cardsEl.insertBefore(cardEl, cardsEl.lastElementChild);
 
+    addDetail(charEl);
     calculatePoint(cardEl);
 
     switch (cardType) {
         case "standard":
+        case "taboo":
             addControl(cardEl, "remove");
             addControl(cardEl, "copy");
             addControl(cardEl, "convert_neutral");
@@ -219,7 +265,25 @@ function copyCard(cardEl) {
 
     characters[charIndex].push(newInfo);
 
+    addDetail(charEl);
     calculatePoint(newEl);
+}
+
+function addDetail(charEl) {
+    const detailsEl = charEl.querySelector(".char-pt-details");
+
+    const itemEl = document.createElement("div");
+    itemEl.className = "char-pt-detail-item";
+    
+    const indexEl = document.createElement("span");
+    indexEl.textContent = `#${detailsEl.children.length + 1}`;
+
+    const ptEl = document.createElement("span");
+    ptEl.textContent = "0pt";
+
+    itemEl.appendChild(indexEl);
+    itemEl.appendChild(ptEl);
+    detailsEl.appendChild(itemEl);
 }
 
 function getCardInf(cardEl) {
@@ -230,19 +294,21 @@ function getCardInf(cardEl) {
     return characters[charIndex][cardIndex];
 }
 
-document.addEventListener("click", (e) => {
-    if (!e.target.closest('.card-control'))
+document.addEventListener("click", e => {
+    if (!e.target.matches(".card-control button"))
         return;
+
 
     const action = e.target.dataset.action;
     const charEl = e.target.closest(".character");
+    const cardEl = e.target.closest(".card") ?? e.target.closest(".new-card");
 
-    if (["unique", "neutral", "monster"].includes(action)) {
+    cardEl.classList.toggle("active", false)
+
+    if (["unique", "neutral", "monster", "taboo"].includes(action)) {
         addCard(charEl, action);
         return;
     }
-
-    const cardEl = e.target.closest(".card") ?? e.target.closest(".new-card");
 
     if (action == "copy") {
         copyCard(cardEl);
@@ -252,6 +318,7 @@ document.addEventListener("click", (e) => {
     const controlEl = e.target.closest(".card-control");
     const cardInfo = getCardInf(cardEl);
     const charIndex = [...charsEl.children].indexOf(charEl);
+    const titleEl = cardEl.querySelector(".card-title");
 
     [...controlEl.childNodes].forEach(child => controlEl.removeChild(child));
 
@@ -275,6 +342,7 @@ document.addEventListener("click", (e) => {
             addControl(cardEl, "convert_monster");
             break;
         case "convert_neutral":
+            titleEl.textContent = cardTypes["neutral"];
             cardInfo.type = "neutral";
             cardInfo.source = "convert";
             cardInfo.insp = null;
@@ -285,6 +353,7 @@ document.addEventListener("click", (e) => {
             addControl(cardEl, "convert_monster");
             break;
         case "convert_monster":
+            titleEl.textContent = cardTypes["monster"];
             cardInfo.type = "monster";
             cardInfo.source = "convert";
             cardInfo.insp = null;
@@ -299,12 +368,28 @@ document.addEventListener("click", (e) => {
     calculatePoint(cardEl);
 });
 
+document.addEventListener("click", e => {
+    if (!e.target.classList.contains("card-mobile-trigger"))
+        return;
+
+    [...document.querySelectorAll(":is(.card, .new-card).active")].forEach(el => el.classList.toggle("active", false));
+    e.target.closest(":is(.card, .new-card)").classList.toggle("active", true);
+});
+
+document.addEventListener("click", e => {
+    if (!e.target.classList.contains("btn-toggle-remove"))
+        return;
+    
+    e.target.closest(".char-layout").querySelector(".char-cards").classList.toggle("hide-remove");
+});
+
 function init() {
     const newCardEls = document.querySelectorAll(".new-card");
     newCardEls.forEach(element => {
         addControl(element, "unique");
         addControl(element, "neutral");
         addControl(element, "monster");
+        addControl(element, "taboo");
     });
 
     const characterEls = document.querySelectorAll(".character");

@@ -93,9 +93,15 @@ h2 {
     gap: 12px;
     flex-direction: row;
     flex-wrap: wrap;
+    max-width: 844px;
 }
 
-.card, .new-card {
+.char-cards.hide-remove .card.remove {
+    display: none;
+}
+
+.card,
+.new-card {
     height: 300px;
     width: 200px;
     border: 1px solid #374151;
@@ -141,8 +147,23 @@ h2 {
     justify-content: space-between;
 }
 
-:is(.card, .new-card):hover .card-control:not(:empty) {
+:is(.card, .new-card):is(.active) .card-control:not(:empty) {
     display: flex;
+}
+
+:is(.card, .new-card).active .card-control:not(:empty) {
+    animation-name: lazy-control;
+    animation-duration: .4s;
+}
+
+@keyframes lazy-control {
+    from {
+        pointer-events: none;
+    }
+
+    to {
+        pointer-events: unset;
+    }
 }
 
 .card-control {
@@ -162,21 +183,48 @@ h2 {
     width: 80%;
 }
 
+.card-mobile-trigger {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
 .card.remove {
     background: #2b0101;
     --font-color: #ad6e6e;
 }
 
-.char-log {
-    background: #020617;
-    border-radius: 12px;
-    padding: 8px;
-    border: 1px solid #1f2937;
+.char-control {
+    flex-grow: 1;
+}
+
+.char-control button {
+    width: 100%;
+}
+
+.char-pt-details {
+    padding: 12px 0;
+}
+
+.char-pt-detail-item {
     display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 200px;
-    min-width: 200px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 4px;
+}
+
+.char-pt-detail-item :first-child {
+    min-width: 30px;
+}
+
+.char-pt-detail-item :last-child {
+    margin-left: auto;
+}
+
+.char-pt-detail-item> :not(:first-child, :last-child, :has(+ :last-child)) {
+    border-right: 1px solid #374151;
+    padding-right: 6px;
 }
 
 button {
