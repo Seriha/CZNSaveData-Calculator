@@ -59,6 +59,18 @@ function calculatePoint(cardEl) {
         else if (removeIndex == 2)
             overallPoint += 10;
 
+        const cardIndex = [...cardEl.parentElement.children].indexOf(cardEl);
+
+        if (cardIndex < 4)
+            if (cardInfo.type == "standard" || cardInfo.type == "unique") {
+                details.push("移除起始");
+                overallPoint += 20;
+            }
+        else if (cardInfo.type == "unique") {
+            details.push("移除獨特");
+            overallPoint += 20;
+        }
+
         details.push(`${actions["remove"]}(${removeIndex})`);
     }
     else {
@@ -100,10 +112,18 @@ function calculatePoint(cardEl) {
             case "taboo":
                 overallPoint += 20;
                 details.push(cardTypes["taboo"]);
+                if (cardInfo.insp == "insp") {
+                    overallPoint += 10;
+                    details.push(actions["insp"]);
+                }
+                else if (cardInfo.insp == "divine") {
+                    overallPoint += 30;
+                    details.push(actions["divine"]);
+                }
                 break;
         }
     }
-    
+
     const ptValueEl = cardEl.matches(".card") ? cardEl.querySelector(".card-pt").lastElementChild : null;
     ptValueEl.textContent = overallPoint;
 
@@ -121,7 +141,7 @@ function calculatePoint(cardEl) {
         detailEl.textContent = detail;
 
         ptDetailsEl.appendChild(detailEl);
-    });    
+    });
 
     const ptEl = document.createElement("span");
     ptEl.textContent = `${overallPoint}pt`;
@@ -141,12 +161,12 @@ function updateTotalPoint(charEl) {
 
     ptEl.classList.toggle("warn", false);
     ptEl.classList.toggle("over", false);
-    
+
     if (ratio > 100)
         ptEl.classList.toggle("over", true);
     else if (ratio > 80)
         ptEl.classList.toggle("warn", true);
-    
+
     charEl.querySelector(".char-pt-value").textContent = overallPoint;
 }
 
@@ -228,7 +248,6 @@ function addCard(charEl, cardType) {
 
     switch (cardType) {
         case "standard":
-        case "taboo":
             addControl(cardEl, "remove");
             addControl(cardEl, "copy");
             addControl(cardEl, "convert_neutral");
@@ -237,6 +256,7 @@ function addCard(charEl, cardType) {
         case "unique":
         case "neutral":
         case "monster":
+        case "taboo":
             addControl(cardEl, "remove");
             addControl(cardEl, "copy");
             addControl(cardEl, "insp");
@@ -247,7 +267,7 @@ function addCard(charEl, cardType) {
     }
 }
 
-function copyCard(cardEl) {    
+function copyCard(cardEl) {
     const charEl = cardEl.closest(".character");
     const charIndex = [...charsEl.children].indexOf(charEl);
     const cardsEl = cardEl.parentElement;
@@ -274,7 +294,7 @@ function addDetail(charEl) {
 
     const itemEl = document.createElement("div");
     itemEl.className = "char-pt-detail-item";
-    
+
     const indexEl = document.createElement("span");
     indexEl.textContent = `#${detailsEl.children.length + 1}`;
 
@@ -379,7 +399,7 @@ document.addEventListener("click", e => {
 document.addEventListener("click", e => {
     if (!e.target.classList.contains("btn-toggle-remove"))
         return;
-    
+
     e.target.closest(".char-layout").querySelector(".char-cards").classList.toggle("hide-remove");
 });
 
