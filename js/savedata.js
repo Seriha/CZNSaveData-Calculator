@@ -34,6 +34,11 @@ function calculatePoint(cardEl) {
 
     const details = [];
 
+    if (cardInfo.convert > 0) {
+        overallPoint += cardInfo.convert * 10;
+        details.push(`轉換(${cardInfo.convert})`);
+    }
+
     const copyIndex = charCopyCards[charIndex].indexOf(cardEl) + 1;
     if (copyIndex > 0) {
         if (copyIndex >= 5)
@@ -208,7 +213,8 @@ function addCard(charEl, cardType) {
     const cardInfo = {
         type: cardType,
         source: null,
-        insp: null
+        insp: null,
+        convert: 0
     }
 
     characters[charIndex].push(cardInfo);
@@ -366,6 +372,7 @@ document.addEventListener("click", e => {
             cardInfo.type = "neutral";
             cardInfo.source = "convert";
             cardInfo.insp = null;
+            cardInfo.convert += 1;
             addControl(cardEl, "remove");
             addControl(cardEl, "copy");
             addControl(cardEl, "insp");
@@ -377,6 +384,7 @@ document.addEventListener("click", e => {
             cardInfo.type = "monster";
             cardInfo.source = "convert";
             cardInfo.insp = null;
+            cardInfo.convert += 1;
             addControl(cardEl, "remove");
             addControl(cardEl, "copy");
             addControl(cardEl, "insp");
